@@ -21,6 +21,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
   const eventTouchStartPos = useRef<{x: number, y: number} | null>(null);
+  const initialPinchDistance = useRef<number | null>(null);
 
   const handleMouseDown = () => {
     setIsPanning(true);
@@ -36,24 +37,44 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
   };
 
   const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (eventTouchStartPos.current === null) {
-      eventTouchStartPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
-    }
-    if (isPanning) {
-      const deltaX = event.touches[0].clientX - eventTouchStartPos.current.x;
-      const deltaY = event.touches[0].clientY - eventTouchStartPos.current.y;
+    if (event.touches.length === 1) {
+      if (eventTouchStartPos.current === null) {
+        eventTouchStartPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      }
+      if (isPanning) {
+        const deltaX = eventTouchStartPos.current.x - event.touches[0].clientX;
+        const deltaY = eventTouchStartPos.current.y - event.touches[0].clientY;
 
-      console.log(`dx: ${deltaX}, dy: ${deltaY}, start: ${eventTouchStartPos.current.x}, ${eventTouchStartPos.current.y}`);
-      setPosition((prevPosition: { x: number; y: number }) => ({
-        x: prevPosition.x + deltaX * (0.1 / zoom),
-        y: prevPosition.y + deltaY * (0.1 / zoom),
-      }));
+        setPosition((prevPosition: { x: number; y: number }) => ({
+          x: prevPosition.x + deltaX * (0.1 / zoom),
+          y: prevPosition.y + deltaY * (0.1 / zoom),
+        }));
+      }
+    } else if (event.touches.length === 2) {
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+      const currentDistance = Math.sqrt(
+        Math.pow(touch2.clientX - touch1.clientX, 2) +
+        Math.pow(touch2.clientY - touch1.clientY, 2)
+      );
+
+      if (initialPinchDistance.current === null) {
+        initialPinchDistance.current = currentDistance;
+      } else {
+        const scale = currentDistance / initialPinchDistance.current;
+        setZoom((prevZoom) => {
+          const newZoom = prevZoom * scale;
+          return parseFloat(Math.min(Math.max(newZoom, 0.5), 2).toFixed(2)); // Clamping between 0.5 and 2
+        });
+        initialPinchDistance.current = currentDistance;
+      }
     }
-  }
+  };
 
   const handleMouseUp = () => {
     setIsPanning(false);
-    eventTouchStartPos.current = null
+    eventTouchStartPos.current = null;
+    initialPinchDistance.current = null;
   };
 
   const handleWheel = (event: WheelEvent) => {
@@ -62,7 +83,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
       return parseFloat(Math.min(Math.max(newZoom, 0.5), 2).toFixed(2)); // Clamping between 0.5 and 2
     });
     event.preventDefault();
-  }
+  };
 
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);

@@ -22,11 +22,13 @@ const app = new PIXI.Application({
 interface SkymapAppContextProps {
   selectPlane: (plane: Plane) => void;
   selectAirport: (airport: Airport) => void;
+  setUserSelectionActive: (userSelectionActive: boolean) => void;
 }
 
 export const SkymapAppContext = createContext<SkymapAppContextProps>({
   selectPlane: (_plane: Plane) => {},
-  selectAirport: (_airport: Airport) => {}
+  selectAirport: (_airport: Airport) => {},
+  setUserSelectionActive: (_userSelectionActive: boolean) => {}
 });
 
 const App: FC = () => {
@@ -38,6 +40,7 @@ const App: FC = () => {
 
   const [selectedPlaneId, setSelectedPlaneId] = useState<string | undefined>(undefined);
   const [selectedAirportCode, setSelectedAirportCode] = useState<string | undefined>(undefined);
+  const [userSelectionActive, setUserSelectionActive] = useState<boolean>(false);
 
   const updateMap = (lastUpdate: number) => {
     setSkyMap((prevSkyMap) => updateSkyMap(prevSkyMap, lastUpdate));
@@ -71,34 +74,36 @@ const App: FC = () => {
   }, [simulationSpeed]);
 
   return (
-    <SkymapAppContext.Provider value={{ selectPlane: handlePlaneSelection, selectAirport: handleAirportSelection }}>
-      <AppProvider value={app}>
-        <Grid2 container spacing={2} sx={{position:"relative"}}>
-          <Grid2 size={"grow"}>
-            <Viewport positionState={{position, setPosition}}>
-              <SkyMapViewer width={appWidth - 20} height={appHeight - 200} skyMap={skyMap}/>
-            </Viewport>
-            <div className="slidecontainer">
-              <input type="range" min="1" max="100" value={simulationSpeed} className="slider" id="simulationSpeedSlider"
-                     onChange={(event) => setSimulationSpeed(parseInt(event.target.value))}/>
-              <label htmlFor="simulationSpeedSlider">Simulation Speed : {simulationSpeed}</label>
-            </div>
-          </Grid2>
-          {(selectedPlaneId || selectedAirportCode) && (
-            <Grid2 container spacing={"16px"} sx={{width: 400, maxWidth: "80%", position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)"}}>
-              <InfoPanel sx={{width: "100%"}}
-                plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
-                onClose={() => setSelectedPlaneId(undefined)}
-              />
-              <InfoPanel sx={{width: "100%"}}
-                airport={skyMap.airports.find((airport) => airport.code === selectedAirportCode)}
-                onClose={() => setSelectedAirportCode(undefined)}
-              />
+    <div className={!userSelectionActive ? "no-select" : ""}>
+      <SkymapAppContext.Provider value={{ selectPlane: handlePlaneSelection, selectAirport: handleAirportSelection, setUserSelectionActive: setUserSelectionActive  }}>
+        <AppProvider value={app}>
+          <Grid2 container spacing={2} sx={{position:"relative"}}>
+            <Grid2 size={"grow"}>
+              <Viewport positionState={{position, setPosition}}>
+                <SkyMapViewer width={appWidth - 20} height={appHeight - 200} skyMap={skyMap}/>
+              </Viewport>
+              <div className="slidecontainer">
+                <input type="range" min="1" max="100" value={simulationSpeed} className="slider" id="simulationSpeedSlider"
+                       onChange={(event) => setSimulationSpeed(parseInt(event.target.value))}/>
+                <label htmlFor="simulationSpeedSlider">Simulation Speed : {simulationSpeed}</label>
+              </div>
             </Grid2>
-        )}
-        </Grid2>
-      </AppProvider>
-    </SkymapAppContext.Provider>
+            {(selectedPlaneId || selectedAirportCode) && (
+              <Grid2 container spacing={"16px"} sx={{width: 400, maxWidth: "80%", position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)"}}>
+                <InfoPanel sx={{width: "100%"}}
+                  plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
+                  onClose={() => setSelectedPlaneId(undefined)}
+                />
+                <InfoPanel sx={{width: "100%"}}
+                  airport={skyMap.airports.find((airport) => airport.code === selectedAirportCode)}
+                  onClose={() => setSelectedAirportCode(undefined)}
+                />
+              </Grid2>
+          )}
+          </Grid2>
+        </AppProvider>
+      </SkymapAppContext.Provider>
+    </div>
   );
 };
 

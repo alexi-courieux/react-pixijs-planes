@@ -1,4 +1,5 @@
-﻿import {createContext, FC, ReactNode, useEffect, useRef, useState} from "react";
+﻿import {createContext, FC, ReactNode, useContext, useEffect, useRef, useState} from "react";
+import { SkymapAppContext } from "../App";
 
 interface ViewportContextProps {
   position: { x: number, y: number };
@@ -14,6 +15,7 @@ interface ViewportProps {
 }
 
 const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
+  const skymapAppContext = useContext(SkymapAppContext);
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const { position, setPosition } = positionState;
@@ -25,6 +27,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
 
   const handleMouseDown = () => {
     setIsPanning(true);
+    skymapAppContext.setUserSelectionActive(false);
   };
 
   const handleMouseMove = (event: MouseEvent) => {
@@ -76,6 +79,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
     setIsPanning(false);
     eventTouchLastPos.current = null;
     initialPinchDistance.current = null;
+    skymapAppContext.setUserSelectionActive(true);
   };
 
   const handleWheel = (event: WheelEvent) => {

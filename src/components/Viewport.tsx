@@ -34,8 +34,8 @@ const Viewport: FC<ViewportProps> = ({children}) => {
   const handleTouchMove = (event: TouchEvent) => {
     if (isPanning) {
       setPosition((prevPosition) => ({
-        x: prevPosition.x - event.touches[0].clientX * (1 / zoom),
-        y: prevPosition.y - event.touches[0].clientY * (1 / zoom),
+        x: prevPosition.x - event.touches[0].clientX * 0.1 * (1 / zoom),
+        y: prevPosition.y - event.touches[0].clientY * 0.1 * (1 / zoom),
       }));
     }
   }

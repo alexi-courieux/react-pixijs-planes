@@ -7,7 +7,11 @@ interface ViewportContextProps {
 
 export const ViewportContext = createContext<ViewportContextProps>({ position: {x: 0, y: 0}, zoom: 1 });
 
-const Viewport: FC<{children: ReactNode}> = ({children}) => {
+interface ViewportProps {
+  children: ReactNode;
+}
+
+const Viewport: FC<ViewportProps> = ({children}) => {
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -27,6 +31,15 @@ const Viewport: FC<{children: ReactNode}> = ({children}) => {
     }
   };
 
+  const handleTouchMove = (event: TouchEvent) => {
+    if (isPanning) {
+      setPosition((prevPosition) => ({
+        x: prevPosition.x - event.touches[0].clientX * (1 / zoom),
+        y: prevPosition.y - event.touches[0].clientY * (1 / zoom),
+      }));
+    }
+  }
+
   const handleMouseUp = () => {
     setIsPanning(false);
   };
@@ -42,10 +55,14 @@ const Viewport: FC<{children: ReactNode}> = ({children}) => {
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchend", handleMouseUp);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
     };
   }, [isPanning]);
 
@@ -70,6 +87,7 @@ const Viewport: FC<{children: ReactNode}> = ({children}) => {
            overflow: "hidden",
            cursor: isPanning ? "grabbing" : "grab",
          }}
+         onTouchStart={handleMouseDown}
     >
       <ViewportContext.Provider value={{ position, zoom }}>
         {children}

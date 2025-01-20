@@ -19,10 +19,6 @@ const generateRandomPlane = (airports: Airport[]): Plane => {
   const targetSpeed = Math.min(Math.max(900, distance * 10 + Math.random() * 100), 500);
   const initialRotation = Math.atan2(arrival.pos.lat - departure.pos.lat, arrival.pos.lon - departure.pos.lon);
 
-  console.log(`Departure: ${departure.code} ${departure.pos.lat}, ${departure.pos.lon}`);
-  console.log(`Arrival: ${arrival.code} ${arrival.pos.lat}, ${arrival.pos.lon}`);
-  console.log(`Initial Rotation: ${initialRotation} / ${initialRotation * 180 / Math.PI}`);
-
   return {
     id: uuidv4().substring(0, 8),
     pos: {
@@ -104,14 +100,12 @@ export const generateRandomSkyMap = (width: number, height:number): SkyMap => {
 
   const planes = Array.from({ length: 10 }, () => generateRandomPlane(airportsData));
 
-  const skyMap: SkyMap = {
+  return {
     width,
     height,
     airports: airportsData,
     planes: planes
   };
-
-  return skyMap;
 };
 
 const updatePlane = (plane: Plane, timeSinceLastUpdate: number): Plane => {
@@ -160,7 +154,6 @@ export const updateSkyMap = (skyMap: SkyMap | undefined, timeSinceLastUpdate: nu
 
   if (planes.length < 10 && Math.random() <= 0.05) {
     const airports = skyMap.airports;
-    console.log(`Generating new plane`);
     const newPlane = generateRandomPlane(airports);
     planes.push(newPlane);
   }

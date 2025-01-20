@@ -11,7 +11,7 @@ import InfoPanel from "./components/InfoPanel.tsx";
 import Airport from "./models/Airport.tsx";
 
 const appWidth = 1600
-const appHeight = 1000
+const appHeight = 800
 
 const app = new PIXI.Application({
   width: appWidth,
@@ -91,6 +91,7 @@ const App: FC = () => {
                 plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
                 onClose={() => setSelectedPlaneId(undefined)}
               />
+              <span style={{display: "block", height: 20}}/>
               <InfoPanel
                 airport={skyMap.airports.find((airport) => airport.code === selectedAirportCode)}
                 onClose={() => setSelectedAirportCode(undefined)}

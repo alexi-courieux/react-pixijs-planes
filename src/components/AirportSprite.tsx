@@ -23,7 +23,7 @@ const AirportSprite: FC<AirportSpriteProps> = ({ airport, pos, scale }) => {
   return (
     <Container x={pos.x} y={pos.y} key={airport.code}>
       <Sprite
-        image={'/images/point.svg'}
+        image={'/pixijs-react/images/point.svg'}
         anchor={0.5}
         scale={0.2 * scale}
         eventMode="static"

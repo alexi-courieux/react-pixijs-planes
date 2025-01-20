@@ -23,7 +23,7 @@ const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, scale }) => {
   return (
     <Container x={pos.x} y={pos.y} key={plane.id}>
       <Sprite
-        image={'/images/plane.svg'}
+        image={'/pixijs-react/images/plane.svg'}
         anchor={0.5}
         scale={0.5 * scale}
         eventMode="static"

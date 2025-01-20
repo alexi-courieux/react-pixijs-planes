@@ -44,12 +44,10 @@ const App: FC = () => {
   };
 
   const handlePlaneSelection = useCallback((plane: Plane) => {
-    console.log(`Plane ${plane.id} selected`);
     setSelectedPlaneId(plane.id);
   }, []);
 
   const handleAirportSelection = useCallback((airport: Airport) => {
-    console.log(`Airport ${airport.code} selected`);
     setSelectedAirportCode(airport.code);
   }, []);
 

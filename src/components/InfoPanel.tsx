@@ -1,8 +1,9 @@
-﻿import { FC } from "react";
-import {Card, CardContent, Typography, IconButton, SxProps, Theme} from "@mui/material";
+﻿import { FC, useRef } from "react";
+import { Card, CardContent, Typography, IconButton, SxProps, Theme } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Plane from "../models/Plane.tsx";
 import Airport from "../models/Airport.tsx";
+import Draggable from "react-draggable";
 
 interface InfoPanelProps {
   plane?: Plane;
@@ -12,6 +13,7 @@ interface InfoPanelProps {
 }
 
 const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
+  const draggableRef = useRef(null);
 
   if (!plane && !airport) {
     return null;
@@ -83,28 +85,28 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
   }
 
   return (
-    <Card sx={sx}>
-      <CardContent sx={
-        {
+    <Draggable nodeRef={draggableRef}>
+      <Card ref={draggableRef} sx={sx}>
+        <CardContent sx={{
           position: 'relative',
           padding: 2,
           height: '100%'
-        }
-      }>
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-        {content}
-      </CardContent>
-    </Card>
+        }}>
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          {content}
+        </CardContent>
+      </Card>
+    </Draggable>
   );
 };
 

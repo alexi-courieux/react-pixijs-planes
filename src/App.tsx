@@ -10,8 +10,8 @@ import {Grid2} from "@mui/material";
 import InfoPanel from "./components/InfoPanel.tsx";
 import Airport from "./models/Airport.tsx";
 
-const appWidth = 1600
-const appHeight = 800
+const appWidth = window.innerWidth
+const appHeight = window.innerHeight
 
 const app = new PIXI.Application({
   width: appWidth,
@@ -78,7 +78,7 @@ const App: FC = () => {
         <Grid2 container spacing={2} sx={{position:"relative"}}>
           <Grid2 size={"grow"}>
             <Viewport positionState={{position, setPosition}}>
-              <SkyMapViewer width={appWidth} height={appHeight} skyMap={skyMap}/>
+              <SkyMapViewer width={appWidth - 20} height={appHeight - 200} skyMap={skyMap}/>
             </Viewport>
             <div className="slidecontainer">
               <input type="range" min="1" max="100" value={simulationSpeed} className="slider" id="simulationSpeedSlider"
@@ -87,7 +87,7 @@ const App: FC = () => {
             </div>
           </Grid2>
           {(selectedPlaneId || selectedAirportCode) && (
-            <Grid2 container spacing={"16px"} sx={{width: 400, position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)"}}>
+            <Grid2 container spacing={"16px"} sx={{width: 400, maxWidth: "80%", position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)"}}>
               <InfoPanel sx={{width: "100%"}}
                 plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
                 onClose={() => setSelectedPlaneId(undefined)}

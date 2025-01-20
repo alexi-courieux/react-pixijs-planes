@@ -20,7 +20,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
 
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
-  const eventTouchStartPos = useRef<{x: number, y: number} | null>(null);
+  const eventTouchLastPos = useRef<{x: number, y: number} | null>(null);
   const initialPinchDistance = useRef<number | null>(null);
 
   const handleMouseDown = () => {
@@ -30,25 +30,26 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
   const handleMouseMove = (event: MouseEvent) => {
     if (isPanning) {
       setPosition((prevPosition: { x: number; y: number }) => ({
-        x: prevPosition.x - event.movementX * (1 / zoom),
-        y: prevPosition.y - event.movementY * (1 / zoom),
+        x: prevPosition.x - event.movementX / zoom,
+        y: prevPosition.y - event.movementY / zoom,
       }));
     }
   };
 
   const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
     if (event.touches.length === 1) {
-      if (eventTouchStartPos.current === null) {
-        eventTouchStartPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+      if (eventTouchLastPos.current === null) {
+        eventTouchLastPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
       }
       if (isPanning) {
-        const deltaX = eventTouchStartPos.current.x - event.touches[0].clientX;
-        const deltaY = eventTouchStartPos.current.y - event.touches[0].clientY;
+        const deltaX = eventTouchLastPos.current.x - event.touches[0].clientX;
+        const deltaY = eventTouchLastPos.current.y - event.touches[0].clientY;
 
         setPosition((prevPosition: { x: number; y: number }) => ({
-          x: prevPosition.x + deltaX * (0.1 / zoom),
-          y: prevPosition.y + deltaY * (0.1 / zoom),
+          x: prevPosition.x + deltaX  / zoom,
+          y: prevPosition.y + deltaY / zoom,
         }));
+        eventTouchLastPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
       }
     } else if (event.touches.length === 2) {
       const touch1 = event.touches[0];
@@ -73,7 +74,7 @@ const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
 
   const handleMouseUp = () => {
     setIsPanning(false);
-    eventTouchStartPos.current = null;
+    eventTouchLastPos.current = null;
     initialPinchDistance.current = null;
   };
 

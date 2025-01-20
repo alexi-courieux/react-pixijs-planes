@@ -8,11 +8,10 @@ import {SkymapAppContext} from "../App.tsx";
 interface PlaneSpriteProps {
   plane: Plane;
   pos: { x: number, y: number };
-  rotation: number;
   scale: number;
 }
 
-const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, rotation, scale }) => {
+const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, scale }) => {
   const textStyle = new TextStyle({
     fontFamily: "Roboto, sans-serif",
     fontSize: 24,
@@ -27,7 +26,6 @@ const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, rotation, scale }) => {
         image={'/images/plane.svg'}
         anchor={0.5}
         scale={0.5 * scale}
-        rotation={rotation}
         eventMode="static"
         pointerdown={() => {
           selectPlane(plane)

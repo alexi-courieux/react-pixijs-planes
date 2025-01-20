@@ -66,7 +66,7 @@ const SkyMapViewer: FC<SkyMapViewerProps> = ({ width, height, skyMap }) => {
                 key={plane.id}
                 plane={plane}
                 pos={{ x: (normalizedPos.x - viewportContext.position.x) * viewportContext.zoom, y: (normalizedPos.y - viewportContext.position.y) * viewportContext.zoom }}
-                rotation={plane.rot} // Adjust rotation by 90 degrees
+
                 scale={viewportContext.zoom}
               />
             );

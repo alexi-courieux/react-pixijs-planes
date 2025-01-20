@@ -33,10 +33,10 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose }) => {
               Position:
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Lat: {plane.pos.lat}
+              Lat: {plane.pos.lat.toFixed(4)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Lon: {plane.pos.lon}
+              Lon: {plane.pos.lon.toFixed(4)}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Altitude: {plane.pos.alt} m
@@ -44,7 +44,7 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose }) => {
           </CardContent>
         </Card>
         <Typography variant="body2" color="text.secondary">
-          Rotation: {plane.rot * 180 / Math.PI}° degrees
+          Rotation: {(plane.rot * 180 / Math.PI).toFixed(2)}° degrees
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Speed: {plane.spd} km/h
@@ -83,11 +83,21 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose }) => {
 
   return (
     <Card>
-      <CardContent>
+      <CardContent sx={
+        {
+          position: 'relative',
+          padding: 2,
+          height: '100%'
+        }
+      }>
         <IconButton
           aria-label="close"
           onClick={onClose}
-          style={{ position: 'absolute', right: 8, top: 8 }}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+          }}
         >
           <CloseIcon />
         </IconButton>

@@ -11,7 +11,7 @@ import InfoPanel from "./components/InfoPanel.tsx";
 import Airport from "./models/Airport.tsx";
 
 const appWidth = 1600
-const appHeight = 700
+const appHeight = 1000
 
 const app = new PIXI.Application({
   width: appWidth,

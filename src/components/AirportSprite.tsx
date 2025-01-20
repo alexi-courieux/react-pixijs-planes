@@ -25,14 +25,14 @@ const AirportSprite: FC<AirportSpriteProps> = ({ airport, pos, scale }) => {
       <Sprite
         image={'/pixijs-react/images/point.svg'}
         anchor={0.5}
-        scale={0.2 * scale}
+        scale={0.1 * scale}
         eventMode="static"
         pointerdown={() => {
           selectAirport(airport)
         }}
       />
       <Text
-        anchor={{ x: 0.5, y: -3 }}
+        anchor={{ x: 0.5, y: -1 }}
         text={airport.code}
         scale={Math.max(0.5, 0.5 * scale)}
         style={textStyle}

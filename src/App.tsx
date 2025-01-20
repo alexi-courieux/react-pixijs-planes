@@ -31,8 +31,9 @@ export const SkymapAppContext = createContext<SkymapAppContextProps>({
 
 const App: FC = () => {
 
-  const [skyMap, setSkyMap] = useState<SkyMap>(() => generateRandomSkyMap(2000, 2000));
+  const [skyMap, setSkyMap] = useState<SkyMap>(() => generateRandomSkyMap(1000, 1000));
   const [simulationSpeed, setSimulationSpeed] = useState(10);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
   const intervalRef = useRef<number | null>(null);
 
   const [selectedPlaneId, setSelectedPlaneId] = useState<string | undefined>(undefined);
@@ -74,9 +75,9 @@ const App: FC = () => {
   return (
     <SkymapAppContext.Provider value={{ selectPlane: handlePlaneSelection, selectAirport: handleAirportSelection }}>
       <AppProvider value={app}>
-        <Grid2 container spacing={2}>
+        <Grid2 container spacing={2} sx={{position:"relative"}}>
           <Grid2 size={"grow"}>
-            <Viewport>
+            <Viewport positionState={{position, setPosition}}>
               <SkyMapViewer width={appWidth} height={appHeight} skyMap={skyMap}/>
             </Viewport>
             <div className="slidecontainer">
@@ -86,13 +87,12 @@ const App: FC = () => {
             </div>
           </Grid2>
           {(selectedPlaneId || selectedAirportCode) && (
-            <Grid2 sx={{width: 400}}>
-              <InfoPanel
+            <Grid2 container spacing={"16px"} sx={{width: 400, position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)"}}>
+              <InfoPanel sx={{width: "100%"}}
                 plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
                 onClose={() => setSelectedPlaneId(undefined)}
               />
-              <span style={{display: "block", height: 20}}/>
-              <InfoPanel
+              <InfoPanel sx={{width: "100%"}}
                 airport={skyMap.airports.find((airport) => airport.code === selectedAirportCode)}
                 onClose={() => setSelectedAirportCode(undefined)}
               />

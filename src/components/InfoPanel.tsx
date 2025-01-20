@@ -1,5 +1,5 @@
 ﻿import { FC } from "react";
-import { Card, CardContent, Typography, IconButton } from "@mui/material";
+import {Card, CardContent, Typography, IconButton, SxProps, Theme} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Plane from "../models/Plane.tsx";
 import Airport from "../models/Airport.tsx";
@@ -8,9 +8,10 @@ interface InfoPanelProps {
   plane?: Plane;
   airport?: Airport;
   onClose: () => void;
+  sx?: SxProps<Theme>;
 }
 
-const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose }) => {
+const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
 
   if (!plane && !airport) {
     return null;
@@ -82,7 +83,7 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose }) => {
   }
 
   return (
-    <Card>
+    <Card sx={sx}>
       <CardContent sx={
         {
           position: 'relative',

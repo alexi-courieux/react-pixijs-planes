@@ -8,15 +8,19 @@ interface ViewportContextProps {
 export const ViewportContext = createContext<ViewportContextProps>({ position: {x: 0, y: 0}, zoom: 1 });
 
 interface ViewportProps {
+  positionState: {position: { x: number, y: number }, setPosition: (pos: { x: number, y: number } | ((prevPosition: { x: number; y: number }) => { x: number; y: number })) => void};
   children: ReactNode;
+  className?: string;
 }
 
-const Viewport: FC<ViewportProps> = ({children}) => {
+const Viewport: FC<ViewportProps> = ({positionState, children, className}) => {
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const { position, setPosition } = positionState;
+
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
+  const eventTouchStartPos = useRef<{x: number, y: number} | null>(null);
 
   const handleMouseDown = () => {
     setIsPanning(true);
@@ -24,24 +28,32 @@ const Viewport: FC<ViewportProps> = ({children}) => {
 
   const handleMouseMove = (event: MouseEvent) => {
     if (isPanning) {
-      setPosition((prevPosition) => ({
+      setPosition((prevPosition: { x: number; y: number }) => ({
         x: prevPosition.x - event.movementX * (1 / zoom),
         y: prevPosition.y - event.movementY * (1 / zoom),
       }));
     }
   };
 
-  const handleTouchMove = (event: TouchEvent) => {
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (eventTouchStartPos.current === null) {
+      eventTouchStartPos.current = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+    }
     if (isPanning) {
-      setPosition((prevPosition) => ({
-        x: prevPosition.x - event.touches[0].clientX * 0.1 * (1 / zoom),
-        y: prevPosition.y - event.touches[0].clientY * 0.1 * (1 / zoom),
+      const deltaX = event.touches[0].clientX - eventTouchStartPos.current.x;
+      const deltaY = event.touches[0].clientY - eventTouchStartPos.current.y;
+
+      console.log(`dx: ${deltaX}, dy: ${deltaY}, start: ${eventTouchStartPos.current.x}, ${eventTouchStartPos.current.y}`);
+      setPosition((prevPosition: { x: number; y: number }) => ({
+        x: prevPosition.x + deltaX * (0.1 / zoom),
+        y: prevPosition.y + deltaY * (0.1 / zoom),
       }));
     }
   }
 
   const handleMouseUp = () => {
     setIsPanning(false);
+    eventTouchStartPos.current = null
   };
 
   const handleWheel = (event: WheelEvent) => {
@@ -55,13 +67,13 @@ const Viewport: FC<ViewportProps> = ({children}) => {
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchmove", (event: TouchEvent) => handleTouchMove(event as unknown as React.TouchEvent<HTMLDivElement>));
     window.addEventListener("touchend", handleMouseUp);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchmove", (event: TouchEvent) => handleTouchMove(event as unknown as React.TouchEvent<HTMLDivElement>));
       window.removeEventListener("touchend", handleMouseUp);
     };
   }, [isPanning]);
@@ -81,6 +93,7 @@ const Viewport: FC<ViewportProps> = ({children}) => {
   return (
     <div ref = {viewportRef}
          onMouseDown={handleMouseDown}
+         className={className}
          style={{
            width: "100%",
            height: "100%",

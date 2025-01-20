@@ -14,7 +14,7 @@ interface PlaneSpriteProps {
 const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, scale }) => {
   const textStyle = new TextStyle({
     fontFamily: "Roboto, sans-serif",
-    fontSize: 24,
+    fontSize: "3em",
     fill: "#000000",
   });
 
@@ -25,16 +25,16 @@ const PlaneSprite: FC<PlaneSpriteProps> = ({ plane, pos, scale }) => {
       <Sprite
         image={'/pixijs-react/images/plane.svg'}
         anchor={0.5}
-        scale={0.5 * scale}
+        scale={0.3 * scale}
         eventMode="static"
         pointerdown={() => {
           selectPlane(plane)
         }}
       />
       <Text
-        anchor={{ x: 0.5, y: -3 }}
+        anchor={{ x: 0.5, y: -2.5 }}
         text={`${plane.id}`}
-        scale={Math.max(0.5, 0.5 * scale)}
+        scale={Math.max(0.4, 0.4 * scale)}
         style={textStyle}
       />
     </Container>

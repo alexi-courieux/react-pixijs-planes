@@ -1,11 +1,11 @@
 ﻿name: Build and Deploy to FTP
-
-workflow_dispatch:
-  inputs:
-    branch:
-      description: 'Branch to deploy'
-      required: true
-      default: 'main'
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'main'
 
 jobs:
   build:

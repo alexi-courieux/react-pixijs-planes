@@ -93,6 +93,7 @@ const App: FC = () => {
                 <InfoPanel sx={{width: "100%"}}
                   plane={skyMap.planes.find((plane) => plane.id === selectedPlaneId)}
                   onClose={() => setSelectedPlaneId(undefined)}
+                  onAirportSelected={(airport: Airport) => setSelectedAirportCode(airport.code)}
                 />
                 <InfoPanel sx={{width: "100%"}}
                   airport={skyMap.airports.find((airport) => airport.code === selectedAirportCode)}

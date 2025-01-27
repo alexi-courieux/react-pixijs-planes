@@ -63,7 +63,7 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
         </Typography>
         <Button variant="text" onClick={handleClickDeparture}>
           Departure: {plane.dep.name} ({plane.dep.code})
-        </Typography>
+        </Button>
         <Button variant="text" onClick={handleClickArrival}>
           Arrival: {plane.arr.name} ({plane.arr.code})
         </Button>

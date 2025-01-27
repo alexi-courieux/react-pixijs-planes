@@ -1,5 +1,5 @@
 ﻿import { FC, useRef } from "react";
-import { Card, CardContent, Typography, IconButton, SxProps, Theme } from "@mui/material";
+import { Card, CardContent, Typography, IconButton, SxProps, Theme, Button } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import Plane from "../models/Plane.tsx";
 import Airport from "../models/Airport.tsx";
@@ -9,11 +9,20 @@ interface InfoPanelProps {
   plane?: Plane;
   airport?: Airport;
   onClose: () => void;
+  onAirportSelected?: (airport: Airport) => void
   sx?: SxProps<Theme>;
 }
 
-const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
+const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, onAirportSelected, sx }) => {
   const draggableRef = useRef(null);
+
+  const handleClickDeparture = () => {
+    onAirportSelected?.(plane!.dep);
+  }
+
+  const handleClickArrival = () => {
+    onAirportSelected?.(plane!.arr);
+  }
 
   if (!plane && !airport) {
     return null;
@@ -52,12 +61,12 @@ const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
         <Typography variant="body2" color="text.secondary">
           Speed: {plane.spd} km/h
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Button variant="text" onClick={handleClickDeparture}>
           Departure: {plane.dep.name} ({plane.dep.code})
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
+        </Button>
+        <Button variant="text" onClick={handleClickArrival}>
           Arrival: {plane.arr.name} ({plane.arr.code})
-        </Typography>
+        </Button>
       </>
     );
   }

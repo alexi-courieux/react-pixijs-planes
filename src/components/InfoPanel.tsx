@@ -13,15 +13,15 @@ interface InfoPanelProps {
   sx?: SxProps<Theme>;
 }
 
-const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, sx }) => {
+const InfoPanel: FC<InfoPanelProps> = ({ plane, airport, onClose, onAirportSelected, sx }) => {
   const draggableRef = useRef(null);
 
   const handleClickDeparture = () => {
-    onAirportSelected(plane.dep);
+    onAirportSelected?.(plane!.dep);
   }
 
   const handleClickArrival = () => {
-    onAirportSelected(plane.arr);
+    onAirportSelected?.(plane!.arr);
   }
 
   if (!plane && !airport) {

@@ -1,4 +1,5 @@
-# SkyMap Simulation
+# PixiJS training project
+### SkyMap Simulation
 
 This project is a training project for learning PixiJS.
 
